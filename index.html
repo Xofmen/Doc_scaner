@@ -38,18 +38,12 @@ input[type=file]{display:none}
 select{flex:1;font:inherit;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px}
 .msg{font-size:13px;color:var(--or2);min-height:18px;text-align:center;margin-top:10px}
 .note{color:var(--mut);font-size:12px;text-align:center;margin-top:18px;line-height:1.5}
-.inst{width:100%;margin-bottom:14px;background:linear-gradient(135deg,var(--or),var(--or2));color:#1a0d00;border:0}
 #cv{touch-action:none;max-width:100%;max-height:62vh;border-radius:8px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
-.modal[hidden]{display:none}
-.modal div{background:var(--card);border:1px solid var(--or);border-radius:18px;padding:20px;max-width:340px;line-height:1.6;font-size:15px}
-.modal b{color:var(--or2)}
 </style>
 </head>
 <body>
 <h1>Скан<span>ер</span> документов</h1>
 <div class="sub">Фото → чистый скан → PDF. Всё работает на вашем телефоне, файлы никуда не отправляются.</div>
-<button class="inst" id="inst" hidden>📲 Установить приложение</button>
 
 <div class="btns">
   <label class="btn pri">📷 Снять<input id="cam" type="file" accept="image/*" capture="environment"></label>
@@ -372,19 +366,6 @@ $('cok').onclick=function(){var p=pages[cur];p.base=warp(cc,cq);p.rot=0;endCrop(
 $('ccancel').onclick=endCrop;
 $('creset').onclick=function(){var p=pages[cur];p.base=p.orig;p.rot=0;endCrop()};
 
-// ---------- установка (PWA) ----------
-var dp=null,ib=$('inst'),gone=false;
-try{gone=localStorage.getItem('instHide')==='1'}catch(e){}
-function hideInst(){ib.hidden=true;try{localStorage.setItem('instHide','1')}catch(e){}}
-var standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;
-var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;if(!standalone&&!gone&&!ios)ib.hidden=false});
-window.addEventListener('appinstalled',hideInst);
-if(standalone)hideInst();
-ib.onclick=async function(){
-  if(dp){dp.prompt();try{await dp.userChoice}catch(e){}dp=null;ib.hidden=true}
-  else ib.hidden=true;
-};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 refresh();
 })();
